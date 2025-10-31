@@ -1,3 +1,6 @@
 2025-10-31 05:47:50,936 - WARNING - Invalid input for add_item: 123, ten
 2025-10-31 05:47:50,937 - WARNING - Tried to remove nonexistent item: orange
 2025-10-31 05:47:50,937 - INFO - Printing inventory data
+2025-10-31 05:51:47,868 - WARNING - Invalid input for add_item: 123, ten
+2025-10-31 05:51:47,868 - WARNING - Tried to remove nonexistent item: orange
+2025-10-31 05:51:47,869 - INFO - Printing inventory data

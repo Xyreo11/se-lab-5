@@ -1,13 +1,24 @@
+"""Inventory management system module.
+
+This module provides basic functionality to add, remove, save,
+and load inventory data while maintaining logs and safe file handling.
+"""
 
 import json
 import logging
 from datetime import datetime
 
-logging.basicConfig(filename='inventory.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    filename='inventory.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 stock_data = {}
 
+
 def add_item(item=None, qty=0, logs=None):
+    """Add an item and quantity to the inventory."""
     if not item or not isinstance(qty, int):
         logging.warning("Invalid input for add_item: %s, %s", item, qty)
         return
@@ -16,48 +27,62 @@ def add_item(item=None, qty=0, logs=None):
     stock_data[item] = stock_data.get(item, 0) + qty
     logs.append(f"{datetime.now()}: Added {qty} of {item}")
 
+
 def remove_item(item, qty):
+    """Remove a quantity of an item from the inventory."""
     try:
         if item in stock_data:
             stock_data[item] -= qty
             if stock_data[item] <= 0:
                 del stock_data[item]
         else:
-            logging.warning(f"Tried to remove nonexistent item: {item}")
-    except KeyError as e:
-        logging.error(f"KeyError while removing item: {e}")
-    except TypeError as e:
-        logging.error(f"TypeError while removing item: {e}")
+            logging.warning("Tried to remove nonexistent item: %s", item)
+    except KeyError as error:
+        logging.error("KeyError while removing item: %s", error)
+    except TypeError as error:
+        logging.error("TypeError while removing item: %s", error)
+
 
 def get_qty(item):
+    """Return the quantity of the given item."""
     return stock_data.get(item, 0)
 
+
 def load_data(file="inventory.json"):
+    """Load inventory data from a JSON file."""
     global stock_data
     try:
-        with open(file, "r", encoding="utf-8") as f:
-            stock_data = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        logging.error(f"Error loading data: {e}")
+        with open(file, "r", encoding="utf-8") as file_handle:
+            stock_data = json.load(file_handle)
+    except (FileNotFoundError, json.JSONDecodeError) as error:
+        logging.error("Error loading data: %s", error)
         stock_data = {}
 
+
 def save_data(file="inventory.json"):
+    """Save current inventory data to a JSON file."""
     try:
-        with open(file, "w", encoding="utf-8") as f:
-            json.dump(stock_data, f)
-    except OSError as e:
-        logging.error(f"Error saving data: {e}")
+        with open(file, "w", encoding="utf-8") as file_handle:
+            json.dump(stock_data, file_handle, indent=4)
+    except OSError as error:
+        logging.error("Error saving data: %s", error)
+
 
 def print_data():
+    """Display the current inventory in a readable format."""
     logging.info("Printing inventory data")
     print("Items Report")
-    for i, q in stock_data.items():
-        print(f"{i} -> {q}")
+    for item, qty in stock_data.items():
+        print(f"{item} -> {qty}")
+
 
 def check_low_items(threshold=5):
-    return [i for i, q in stock_data.items() if q < threshold]
+    """Return a list of items below the given threshold."""
+    return [item for item, qty in stock_data.items() if qty < threshold]
+
 
 def main():
+    """Main execution block for the inventory system."""
     add_item("apple", 10)
     add_item("banana", -2)
     add_item(123, "ten")
@@ -68,6 +93,7 @@ def main():
     save_data()
     load_data()
     print_data()
+
 
 if __name__ == "__main__":
     main()
