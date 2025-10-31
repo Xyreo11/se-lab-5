@@ -49,14 +49,14 @@ def get_qty(item):
 
 
 def load_data(file="inventory.json"):
-    """Load inventory data from a JSON file."""
-    global stock_data
+    """Load inventory data from a JSON file and return it."""
     try:
         with open(file, "r", encoding="utf-8") as file_handle:
-            stock_data = json.load(file_handle)
+            data = json.load(file_handle)
+            return data
     except (FileNotFoundError, json.JSONDecodeError) as error:
         logging.error("Error loading data: %s", error)
-        stock_data = {}
+        return {}
 
 
 def save_data(file="inventory.json"):
@@ -91,7 +91,10 @@ def main():
     print(f"Apple stock: {get_qty('apple')}")
     print(f"Low items: {check_low_items()}")
     save_data()
-    load_data()
+    loaded_data = load_data()
+    if loaded_data:
+        stock_data.clear()
+        stock_data.update(loaded_data)
     print_data()
 
 
